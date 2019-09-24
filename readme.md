@@ -20,11 +20,11 @@
   3. Run command : docker-compose up --build in the root directory of this project
   4. Run scripts to populate local database schemas
      1. ORACLE -
-        1. docker exec -it cebs-oracle-database bash
+        1. docker exec -it oracle-database bash
         2. sqlplus SYSTEM/Oradoc_db1@ORCLCDB
         3. @/opt/oracle_schema.sql
      2. MySQL -
-        1. docker exec -t -i cebs-mysql-database /bin/bash -c "mysql -uroot -pmysql_root_password1 MYSQL < /opt/schema.sql;"
+        1. docker exec -t -i mysql-database /bin/bash -c "mysql -uroot -pmysql_root_password1 MYSQL < /opt/schema.sql;"
   5. run follow up creation script from root project directory : sh startup.sh or ./startup.sh
 
 ## Regular Usage
@@ -48,7 +48,7 @@
             if (array_key_exists('path', $parsedURL)) {
                 $relativeURL = $parsedURL['path'];
             }
-- create a dockerhub account for asrc federal to house base images
+- create a dockerhub account to house base images
 - create images with just databases for temps
 - it seems like adding phpcs globally isnt working right, add to the project composer.json
 
