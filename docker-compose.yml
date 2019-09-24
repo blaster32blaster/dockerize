@@ -1,0 +1,120 @@
+#This file is inside a folder named 'dock' at the root of my laravel project
+version: "3.2"
+services:
+    #PHP with apache
+    httpd:
+      #image will be built by processing the Dockerfile in this path
+      build: .
+      container_name: php_cont
+      command:
+      - "--log.level=INFO"
+      environment:
+        XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
+      links:
+        - redis 
+        - db
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.httpd.rule=Host(`php.localhost`)"
+        - "traefik.http.routers.httpd.entrypoints=web"
+      #map host folders (relative to this file) to service
+      volumes:
+        - ./public/:/var/www/html
+        - ./:/var/www
+      #mark the db services as a dependency
+      depends_on:
+        - redis
+        - db
+      restart:
+        always
+      networks:
+        - traefik_webgateway 
+        - internal
+    #mysql db
+    db:
+      # image: mysql:5.7.20
+      build: ./dock-files/MySqlDB
+      container_name: mysql-database
+      restart: always
+      #storing the mysql folder outside allows persistence
+      volumes:
+        - ./dock-mysql:/var/lib/mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: mysql_root_password1
+        MYSQL_USER: user
+        MYSQL_PASSWORD: mysql_user_password1
+        MYSQL_DATABASE: MYSQL
+      labels:
+        - "traefik.enable=false"  
+      networks:
+        internal:
+          aliases:
+            - mysql
+      ports:
+      - "4314:3306"
+    #redis
+    redis:
+      image: redis
+      container_name: redis
+      labels:
+        - "traefik.enable=false"
+      networks:
+        internal:
+          aliases:
+            - redis
+    # oracle_db:
+      build: ./dock-files/OracleDB
+      container_name: oracle-database
+      restart: unless-stopped
+      #storing the oracle folder outside allows persistence
+      shm_size: 1g
+      volumes:
+        - ./dock-oracle/oracle:/ORCL
+      labels:
+        - traefik.enable=false  
+      networks:
+        internal:
+          aliases:
+            - oracle
+      ports:
+        - 1521:1521
+        - 8085:8080
+    # oracle_db2:
+    #   build: ./dock-files/OracleDB
+    #   container_name: oracle-database-2
+    #   restart: unless-stopped
+    #   #storing the oracle folder outside allows persistence
+    #   shm_size: 1g
+    #   volumes:
+    #     - ./dock-oracle/oracle2:/ORCL
+    #   labels:
+    #     - traefik.enable=false  
+    #   networks:
+    #     - traefik_webgateway
+    #     - internal
+    #   ports:
+    #     - 1522:1521
+    #     - 8086:8080
+    # oracle_db3:
+    #   build: ./dock-files/OracleDB
+    #   container_name: oracle-database-3
+    #   restart: unless-stopped
+    #   #storing the oracle folder outside allows persistence
+    #   shm_size: 1g
+    #   volumes:
+    #     - ./dock-oracle/oracle3:/ORCL
+    #   labels:
+    #     - traefik.enable=false  
+    #   networks:
+    #     - traefik_webgateway
+    #     - internal
+    #   ports:
+    #     - 1523:1521
+    #     - 8087:8080
+volumes:
+    db_data:
+networks:
+  traefik_webgateway:
+    external: true
+  internal:
+    external: true
