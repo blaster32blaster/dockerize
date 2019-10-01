@@ -1,0 +1,27 @@
+#!/bin/sh
+
+PROJECT=`docker exec -i --user=1000:1000 php_cont php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
+STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+
+# Determine if a file list is passed
+if [ "$#" -eq 1 ]
+then
+	oIFS=$IFS
+	IFS='
+	'
+	SFILES="$1"
+	IFS=$oIFS
+fi
+SFILES=${SFILES:-$STAGED_FILES_CMD}
+
+echo "Running Code Sniffer..."
+docker exec -i --user=1000:1000 php_cont phpcs --ignore=*vendor/*,*tests/*,*node_modules/*,*storage/*,*.js --standard=psr2 --encoding=utf-8 ../ $FILES
+if [ $? != 0 ]
+then
+	echo "Fix code style errors before commiting."
+	echo "You can try to automatically fix the issues by running:  docker exec -i --user=1000:1000 php_cont phpcbf --standard=psr2 ../ "
+	echo "Check for PSR-2 errors manually by running the command:  docker exec -i --user=1000:1000 php_cont  phpcs --ignore=*vendor/*,*tests/*,*node_modules/*,*storage/*,*.js --standard=psr2 --encoding=utf-8 ../"
+	exit 1
+fi
+
+exit $?

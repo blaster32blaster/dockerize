@@ -7,7 +7,8 @@ services:
       build: .
       container_name: php_cont
       command:
-      - "--log.level=INFO"
+        # --log.level=INFO
+        sh ../dock-files/startup.sh
       environment:
         XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
       links:

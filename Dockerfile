@@ -39,3 +39,19 @@ RUN echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8 \
        && docker-php-ext-install \
                pdo_oci 
 RUN docker-php-ext-install pdo_mysql
+
+# get php code sniffer
+RUN wget -O /tmp/phpcs.phar https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+RUN cp /tmp/phpcs.phar /usr/local/bin/phpcs
+RUN chmod +x /usr/local/bin/phpcs
+
+# set phpcs config
+RUN /usr/local/bin/phpcs --config-set show_progress 1 && \
+    /usr/local/bin/phpcs --config-set colors 1 && \
+    /usr/local/bin/phpcs --config-set report_width 140 && \
+    /usr/local/bin/phpcs --config-set encoding utf-8
+
+# get php code beautifier
+RUN wget -O /tmp/phpcbf.phar https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar
+RUN cp /tmp/phpcbf.phar /usr/local/bin/phpcbf
+RUN chmod +x /usr/local/bin/phpcbf

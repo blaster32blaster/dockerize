@@ -114,6 +114,23 @@ full article : <https://medium.com/@jasonterando/debugging-with-visual-studio-co
 *Publisher: Ben Mewburn*
 *VS Marketplace Link: <https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client>*
 
-### VSCode php code sniffer 
+### VSCode php code sniffer
 
+- to be added later
 
+## Additional Tools
+
+### PHP Code Sniffer
+
+- PHP Code Sniffer will inspect the code base for psr2 errors
+- Run Command: docker exec -i --user=1000:1000 cebs2  phpcs --ignore=*vendor/*,*tests/*,*node_modules/*,*storage/*,*.js --standard=psr2 --encoding=utf-8 ../
+
+### PHP Code Beautifier
+
+- PHP Code Beautifier will attempt to automatically fix psr2 error in the project
+- Run Command : docker exec -i --user=1000:1000 cebs2 phpcbf --standard=psr2 ../
+
+### Git Hooks
+
+- Git hooks are added automatically when the container is started
+- These hooks are copied out of the dock-files/hooks folder
