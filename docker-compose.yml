@@ -18,6 +18,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.httpd.rule=Host(`php.localhost`)"
         - "traefik.http.routers.httpd.entrypoints=web"
+        - "traefik.port=80"
       #map host folders (relative to this file) to service
       volumes:
         - ./public/:/var/www/html

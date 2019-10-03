@@ -17,15 +17,30 @@
 
   1. Ensure that Docker for Windows ( or other operating system ) is installed and running.
   2. Run command : docker network create traefik_webgateway
-  3. Run command : docker-compose up --build in the root directory of this project
-  4. Run scripts to populate local database schemas
+  3. Run command : docker network create internal
+  4. Run command : docker-compose up --build in the root directory of this project
+  5. Run scripts to populate local database schemas
      1. ORACLE -
-        1. docker exec -it oracle-database bash
-        2. sqlplus SYSTEM/Oradoc_db1@ORCLCDB
-        3. @/opt/oracle_schema.sql
+         1. docker exec -it oracle-database bash
+         2. sqlplus SYSTEM/Oradoc_db1@ORCLCDB
+         3. ALTER SESSION SET "_ORACLE_SCRIPT"=true;
+         4. CREATE TABLESPACE "ORACLEDB" DATAFILE 'oracledb.dbf' size 4000M;
+         5. CREATE TEMPORARY TABLESPACE "temp_tablespace" TEMPFILE 'temp_tablespace.dbf' size 4000M;
+         6. Run command : CREATE USER ORACLEDB IDENTIFIED BY adminpassword5 DEFAULT TABLESPACE "ORACLEDB" TEMPORARY TABLESPACE "temp_tablespace"  QUOTA UNLIMITED ON "ORACLEDB";
+         7. Run command : GRANT create session TO ORACLEDB;
+         8. Run command : GRANT create table TO ORACLEDB;
+         9. Run command : GRANT create view TO ORACLEDB;
+         10. Run command : GRANT create any trigger TO ORACLEDB;
+         11. Run command : GRANT create any procedure TO ORACLEDB;
+         12. Run command : GRANT create sequence TO ORACLEDB;
+         13. Run command : GRANT create synonym TO ORACLEDB;
+         14. Run command : ALTER USER SYSTEM QUOTA UNLIMITED ON ORACLEDB;
+         15. Run command : alter tablespace ORACLEDB add datafile '/u01/app/oracle/product/12.2.0/dbhome_1/dbs/oracledb2.dbf' size 2000M autoextend on;
+         16. Run command : alter tablespace UNDOTBS1 add datafile '/u01/app/oracle/product/12.2.0/dbhome_1/dbs/undotbs1.dbf' size 2000M autoextend on;
+         17. Run command : @/opt/oracle_schema.sql
      2. MySQL -
         1. docker exec -t -i mysql-database /bin/bash -c "mysql -uroot -pmysql_root_password1 MYSQL < /opt/schema.sql;"
-  5. run follow up creation script from root project directory : sh startup.sh or ./startup.sh
+  6. run follow up creation script from root project directory : sh startup.sh or ./startup.sh
 
 ## Regular Usage
 
