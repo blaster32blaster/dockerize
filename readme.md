@@ -65,7 +65,7 @@
             }
 - create a dockerhub account to house base images
 - create images with just databases for temps
-- it seems like adding phpcs globally isnt working right, add to the project composer.json
+- get the internal network setup properly
 
 ## Troubleshooting
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker exec -i --user=1000:1000 cebs2 php
+docker exec -i --user=1000:1000 php_cont php
